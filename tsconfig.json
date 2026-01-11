@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+
+    "rootDir": ".",
+    "outDir": "/dist",
+
+    "strict": true,
+    "types": ["node"],
+
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+
+    "sourceMap": true,
+    "skipLibCheck": true
+  },
+  "include": ["src", "migrations", "src/routes"],
+  "exclude": ["node_modules", "dist"]
+}
