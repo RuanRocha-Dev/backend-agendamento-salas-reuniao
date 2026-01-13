@@ -8,6 +8,7 @@ export interface appointmentAttributes {
   idMeetingRoom: number;
   createdAt?: Date;
   updatedAt?: Date;
+  description?: String;
 }
 
 export const Appointment = db.define<Model<appointmentAttributes>>(
@@ -37,6 +38,10 @@ export const Appointment = db.define<Model<appointmentAttributes>>(
         key: 'id',
       },
     },
+    description: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    }
   },
   {
     tableName: 'appointments',

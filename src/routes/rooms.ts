@@ -1,10 +1,17 @@
 import { Router } from "express";
 
 import { roomsController } from "../controllers/roomsController.js";
-import { roomValidation } from "../middlewares/validationMiddlewares.js";
+import { createRoomValidation, updateRoomValidation } from "../middlewares/validationMiddlewares.js";
 
 const router = Router();
 
-router.post("/createRoom", roomValidation, roomsController().create);
+router.get("/findAll", roomsController().findAll);
+router.get("/findById", roomsController().findById);
+
+router.post("/create", createRoomValidation, roomsController().create);
+
+router.post("/update", updateRoomValidation, roomsController().update);
+
+router.post("/delete", roomsController().delete);
 
 export default router;

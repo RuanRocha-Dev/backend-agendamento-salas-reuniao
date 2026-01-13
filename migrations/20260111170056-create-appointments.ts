@@ -39,6 +39,11 @@ export async function up(queryInterface: QueryInterface) {
     updated_at: {
       type: DataTypes.DATE,
       allowNull: true
+    },
+    
+    description: {
+      type: DataTypes.STRING,
+      allowNull: true
     }
   });
 }

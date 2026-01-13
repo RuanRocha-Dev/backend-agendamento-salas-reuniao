@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction} from "express";
 import { sendResponse } from "../utils/response.js";
 
-export const roomValidation = (req: Request, res: Response, next: NextFunction) => {
+export const createRoomValidation = (req: Request, res: Response, next: NextFunction) => {
     const name: string = req.body?.name;
     const capacity: number = req.body?.capacity;
 
@@ -11,6 +11,22 @@ export const roomValidation = (req: Request, res: Response, next: NextFunction) 
     
     if(name.length > 100) {
         return sendResponse(res, false, "Falha ao criar sala.", null, "O campo nome deve conter no máximo 100 caracteres.", 400);
+    }
+
+    next();
+}
+
+export const updateRoomValidation = (req: Request, res: Response, next: NextFunction) => {
+    const id: number = req.body?.id;
+    const name: string = req.body?.name;
+    const capacity: number = req.body?.capacity;
+
+    if (!name || !capacity || !id) {
+        return sendResponse(res, false, "Falha ao editar sala.", null, "Todos os campos são obrigatórios", 400);
+    }
+    
+    if(name.length > 100) {
+        return sendResponse(res, false, "Falha ao editar sala.", null, "O campo nome deve conter no máximo 100 caracteres.", 400);
     }
 
     next();
