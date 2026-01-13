@@ -33,7 +33,7 @@ export const updateRoomValidation = (req: Request, res: Response, next: NextFunc
 }
 
 export const appointMentsValidation = (req: Request, res: Response, next: NextFunction) => {
-    const { startTime, endTime, idMeetingRoom } = req.body;
+    const { startTime, endTime, idMeetingRoom, description } = req.body;
 
     if (!startTime || !endTime || !idMeetingRoom) {
         return sendResponse(res, false, "Falha ao criar agendamento.", null, "Todos os campos são obrigatórios", 400);
@@ -48,6 +48,10 @@ export const appointMentsValidation = (req: Request, res: Response, next: NextFu
 
     if (isNaN(start) || isNaN(end)) {
         return sendResponse(res, false, "Falha ao criar agendamento.", null, "As datas enviadas são inválidas", 400);
+    }
+    
+    if (description.length > 100) {
+        return sendResponse(res, false, "Falha ao criar agendamento.", null, "Campo descrição não pode ter mais de 100 caracteres", 400);
     }
 
     next();

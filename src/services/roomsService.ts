@@ -1,6 +1,7 @@
 import { MeetingRoom, meetingRoomAttributes } from '../models/roomsModel.js';
 import {Appointment, appointmentAttributes} from '../models/appointmentsModel.js';
 import { returnDefault, returnDefaultInterface } from "../utils/response.js";
+import { dateNow } from '../utils/response.js';
 
 export const meetingRoomService = {
     create: async (data: meetingRoomAttributes): Promise<returnDefaultInterface> => { // Criação de padrão de uma sala levando em consideração a tipagem da model
@@ -15,11 +16,11 @@ export const meetingRoomService = {
             return returnDefault(true, 'Sala criada com sucesso.', newRoom.get({ plain: true }), 201);
         } catch (error: any) {
             if (error.name === 'SequelizeUniqueConstraintError') {
-                return returnDefault(false, 'Já existe uma sala criada com este nome.', null, 409);
+                return returnDefault(false, 'Já existe uma sala criada com este nome.', null, 404);
             }
 
             if (error.name === 'SequelizeValidationError') {
-                return returnDefault(false, 'Dados inválidos ou incompletos.', null, 409);
+                return returnDefault(false, 'Dados inválidos ou incompletos.', null, 404);
             }
 
             return returnDefault(false, 'Erro interno do servidor.', null, 500);
@@ -62,8 +63,7 @@ export const meetingRoomService = {
             if(getAppointmentsByIdRoom) {
                 getAppointmentsByIdRoom.forEach(el => {
                     const startDate = new Date(el.dataValues.startTime); 
-                    const endDate = new Date(el.dataValues.endTime); 
-                    const dateNow = new Date(Date.now() - 3 * 60 * 60 * 1000);
+                    const endDate = new Date(el.dataValues.endTime);
                     
                     if(dateNow > startDate && dateNow < endDate) {
                         meetingInprogress = true;
@@ -72,7 +72,7 @@ export const meetingRoomService = {
             }
 
             if(meetingInprogress) {
-                return returnDefault(false, 'Esta sala esta com uma reunião em andamento, aguarde a termino e tente novamente.', null, 409);
+                return returnDefault(false, 'Esta sala esta com uma reunião em andamento, aguarde a termino e tente novamente.', null, 404);
             }
     
             const result = await room.update(data); 
@@ -83,11 +83,11 @@ export const meetingRoomService = {
             return returnDefault(false, 'Erro ao fazer update.', null, 404);
         } catch (error: any) {
             if (error.name === 'SequelizeUniqueConstraintError') {
-                return returnDefault(false, 'Já existe uma sala criada com este nome.', null, 409);
+                return returnDefault(false, 'Já existe uma sala criada com este nome.', null, 404);
             }
 
             if (error.name === 'SequelizeValidationError') {
-                return returnDefault(false, 'Dados inválidos ou incompletos.', null, 409);
+                return returnDefault(false, 'Dados inválidos ou incompletos.', null, 404);
             }
 
             return returnDefault(false, 'Erro interno do servidor.', null, 500);
@@ -126,7 +126,7 @@ export const meetingRoomService = {
             }
 
             if(meetingInprogress) {
-                return returnDefault(false, 'Não é possivel deletar uma sala com agendamentos futuros.', null, 409);
+                return returnDefault(false, 'Não é possivel deletar uma sala com agendamentos futuros.', null, 404);
             }
     
             if(arridsAppointments?.length > 0) {
@@ -140,7 +140,7 @@ export const meetingRoomService = {
             return returnDefault(true, 'Sala deletada com sucesso.', null, 200);
         } catch (error: any) {
             if (error.name === 'SequelizeValidationError') {
-                return returnDefault(false, 'Dados inválidos ou incompletos.', null, 409);
+                return returnDefault(false, 'Dados inválidos ou incompletos.', null, 404);
             }
 
             return returnDefault(false, 'Erro interno do servidor.', null, 500);

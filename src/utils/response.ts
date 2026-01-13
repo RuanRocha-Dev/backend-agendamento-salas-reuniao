@@ -34,3 +34,5 @@ export const returnDefault = (status: boolean, message: string, data: any | null
         "code": code
     };
 }
+
+export const dateNow = new Date(Date.now() - 3 * 60 * 60 * 1000);

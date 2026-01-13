@@ -5,6 +5,11 @@ import { appointMentsValidation } from "../middlewares/validationMiddlewares.js"
 
 const router = Router();
 
-router.post("/createHourly", appointMentsValidation, appointmentsController().create);
+router.get("/findAll", appointmentsController().findAll);
+router.get("/findByDate", appointmentsController().findByDate);
+
+router.post("/create", appointMentsValidation, appointmentsController().create);
+
+router.post("/delete", appointmentsController().delete);
 
 export default router;

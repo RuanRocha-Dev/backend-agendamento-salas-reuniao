@@ -10,8 +10,8 @@ const PORT = envGlobal.app.port;
 
 app.use(cors());
 app.use(express.json());
-app.use('/api', roomsRouter)
-app.use('/api', appointMentRouter)
+app.use('/api/room', roomsRouter)
+app.use('/api/appointment', appointMentRouter)
 
 async function startServer() {
     try {
