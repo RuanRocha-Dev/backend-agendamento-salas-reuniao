@@ -3,13 +3,16 @@ import { MeetingRoom, meetingRoomAttributes } from '../models/roomsModel.js';
 import { returnDefault, returnDefaultInterface } from "../utils/response.js";
 import { findMettingByDate } from "../repository/appointment.js";
 import { dateNow } from "../utils/response.js";
+import { envGlobal } from "../config/env.js";
+
+import { DateTime } from "luxon";
 
 export const appointmentsService = {
     create: async (data: appointmentAttributes): Promise<returnDefaultInterface> => {
         try {
-            const startTime = new Date(data.startTime);
-            const endTime = new Date(data.endTime);
-            const dateLimit = new Date(data.startTime);
+            const startTime = DateTime.fromFormat(data.startTime.toString(), "dd/MM/yyyy HH:mm", {zone: envGlobal.db.timezone}).toJSDate();
+            const endTime = DateTime.fromFormat(data.endTime.toString(), "dd/MM/yyyy HH:mm", {zone: envGlobal.db.timezone}).toJSDate();
+            const dateLimit = DateTime.fromFormat(data.startTime.toString(), "dd/MM/yyyy HH:mm", {zone: envGlobal.db.timezone}).toJSDate();
             dateLimit.setMinutes(dateLimit.getMinutes() + 10);
 
             const resultRooms = await MeetingRoom.findByPk(data.idMeetingRoom);
@@ -17,7 +20,7 @@ export const appointmentsService = {
                 return returnDefault(false, 'Sala inexistente para agendamento.', null, 422);
             }
 
-            if(startTime < dateNow) {
+            if(startTime < dateNow().toJSDate()) {
                 return returnDefault(false, 'A data do agendamento não pode ser menor que a data atual.', null, 422);
             }
 
@@ -28,6 +31,9 @@ export const appointmentsService = {
             if(endTime <= startTime) {
                 return returnDefault(false, 'A data de inicio não pode ser menor que a data fim.', null, 422);
             }
+
+            data.startTime = startTime;
+            data.endTime = endTime;
 
             const appointment = await Appointment.create(data);
             return {
@@ -64,13 +70,13 @@ export const appointmentsService = {
             const startTime = new Date(appointment.dataValues.startTime);
             const endTime = new Date(appointment.dataValues.endTime);
 
-            if(startTime < dateNow && endTime > dateNow) {
+            if(startTime < dateNow().toJSDate() && endTime > dateNow().toJSDate()) {
                 return returnDefault(false, 'Não é possivel deletar um agendamento que esta em andamento.', null, 404);
             }
             
     
+            await appointment.destroy();
             return returnDefault(true, 'Agendamento deletado com sucesso.', null, 200);
-            // await appointment.destroy();
         } catch (error: any) {
             if (error.name === 'SequelizeValidationError') {
                 return returnDefault(false, 'Dados inválidos ou incompletos.', null, 404);
@@ -94,19 +100,12 @@ export const appointmentsService = {
         return returnDefault(false, 'Nenhum agendamento encontrado.', null, 404);
     },
 
-    findByDate: async (id: number) => {
-        const room = await findMettingByDate('2026-01-14 07:01:00.000');
-        console.log(room)
-        if (!room) throw new Error('Sala não encontrada');
-        return room;
+    findByDate: async (date: string) => {
+        const appointments = await findMettingByDate(date);
+        if(appointments) {
+            return returnDefault(true, '', appointments, 200);
+        }
+
+        return returnDefault(false, 'Nenhum agendamento encontrado para este horário', null, 404);
     },
-
-
-    // update: async (id: number, data: Partial<meetingRoomAttributes>) => {
-    //     const room = await MeetingRoom.findByPk(id);
-    //     if (!room) throw new Error('Sala não encontrada');
-    //     return await room.update(data);
-    // },
-
-
 };

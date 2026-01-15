@@ -17,7 +17,7 @@ async function startServer() {
     try {
         await db.authenticate();
         app.listen(PORT, () => {
-        console.log(`rodando na: ${PORT}`);
+            console.log(`rodando na: ${PORT}`);
         });
 
     } catch (error) {

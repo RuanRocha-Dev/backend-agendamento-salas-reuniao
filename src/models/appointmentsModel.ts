@@ -8,7 +8,7 @@ export interface appointmentAttributes {
   idMeetingRoom: number;
   createdAt?: Date;
   updatedAt?: Date;
-  description?: String;
+  description?: string;
 }
 
 export const Appointment = db.define<Model<appointmentAttributes>>(

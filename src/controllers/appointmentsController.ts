@@ -9,19 +9,21 @@ export const appointmentsController = () => ({
   findAll: async (req: Request, res: Response) => {
     const result = await appointmentsService.findAll();
     if(result?.status !== false) {
-      return sendResponse(res, true, "", result?.data, false, result.code);
+      return sendResponse(res, true, "", result?.data, result.code);
     }
     
-    return sendResponse(res, false, "", result.message, true, result.code);
+    return sendResponse(res, false, "Nenhum agendamento encontrado", result.message, result.code);
   },
 
   findByDate: async (req: Request, res: Response) => {
-    const result = await appointmentsService.findByDate();
-    // if(result?.status !== false) {
-    //   return sendResponse(res, true, "", result?.data, false, result.code);
-    // }
+    const date = String(req?.query?.date);
+
+    const result = await appointmentsService.findByDate(date);
+    if(result?.status !== false) {
+      return sendResponse(res, true, "", result?.data, result.code);
+    }
     
-    // return sendResponse(res, false, "", result.message, true, result.code);
+    return sendResponse(res, false, result.message, null, result.code);
   },
 
   create: async (req: Request, res: Response) => {
@@ -29,10 +31,10 @@ export const appointmentsController = () => ({
 
     const result = await appointmentsService.create({startTime, endTime, idMeetingRoom, description});
     if(result?.status !== false) {
-      return sendResponse(res, true, "cadastro realizado com sucesso.", result.message, result?.data, result.code);
+      return sendResponse(res, true, "cadastro realizado com sucesso.", result?.data, result.code);
     }
     
-    return sendResponse(res, false, "Erro ao criar agendamento", result.message, false, result.code);
+    return sendResponse(res, false, result.message, null, result.code);
   },
 
   delete: async (req: Request, res: Response) => {
@@ -40,9 +42,9 @@ export const appointmentsController = () => ({
 
     const result = await appointmentsService.delete(id.id);
     if(result?.status !== false) {
-      return sendResponse(res, true, result.message, null, false, result.code);
+      return sendResponse(res, true, result.message, null, result.code);
     }
     
-    return sendResponse(res, false, result.message, null, true, result.code);
+    return sendResponse(res, false, result.message, null, result.code);
   }
 });

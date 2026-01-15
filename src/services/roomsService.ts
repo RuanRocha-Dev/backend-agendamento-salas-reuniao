@@ -6,7 +6,6 @@ import { dateNow } from '../utils/response.js';
 export const meetingRoomService = {
     create: async (data: meetingRoomAttributes): Promise<returnDefaultInterface> => { // Criação de padrão de uma sala levando em consideração a tipagem da model
         try {
-
             if(data.capacity <= 0) {
                 return returnDefault(false, 'A sala deve ter suporte para 1 participante no minimo.', null, 422);
             }
@@ -62,10 +61,10 @@ export const meetingRoomService = {
             let meetingInprogress = false;
             if(getAppointmentsByIdRoom) {
                 getAppointmentsByIdRoom.forEach(el => {
-                    const startDate = new Date(el.dataValues.startTime); 
-                    const endDate = new Date(el.dataValues.endTime);
+                    const startDate = dateNow(el.dataValues.startTime); 
+                    const endDate = dateNow(el.dataValues.endTime);
                     
-                    if(dateNow > startDate && dateNow < endDate) {
+                    if(dateNow() > startDate && dateNow() < endDate) {
                         meetingInprogress = true;
                     }
                 })
@@ -111,17 +110,16 @@ export const meetingRoomService = {
             let arridsAppointments: number[] = [];
             if(getAppointmentsByIdRoom) {
                 getAppointmentsByIdRoom.forEach(el => {
-                    const startDate = new Date(el.dataValues.startTime); 
-                    const endDate = new Date(el.dataValues.endTime); 
-                    const dateNow = new Date(Date.now() - 3 * 60 * 60 * 1000);
-                    
+                    const startDate = el.dataValues.startTime; 
+                    const endDate = el.dataValues.endTime; 
+                    const dateNow = new Date(Date.now());
+
                     arridsAppointments.push(Number(el.dataValues.id)); // Criando um array de ids do agendamento, para se caso não houver nenhum agendamento futuro,ire deletar os agendamentos junto com a sala
 
                     if((dateNow > startDate && dateNow < endDate) || dateNow < startDate) {
                         meetingInprogress = true; // validando se tem uma reunião em andamento ou se vai ter futuramente uma reunião 
                         arridsAppointments = []; // Se caso cair nesse if, limpo o array de IDS, não vai ser preciso deletar nenhum agendamento pois a sala tem agendamentos futuros
                     }
-
                 })
             }
 

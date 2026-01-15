@@ -1,4 +1,5 @@
 import { Response } from "express";
+import { DateTime } from "luxon";
 
 export interface sendReponseInterface {
     res: Response, 
@@ -9,12 +10,11 @@ export interface sendReponseInterface {
     status: number
 }
 
-export const sendResponse = (res: Response, sucess: boolean, message: string, data: any | null, error: string | boolean, status: number)  => {
+export const sendResponse = (res: Response, sucess: boolean, message: string, data: any | null, status: number)  => {
     return res.status(status).json({ // Centraliza todo o retorno das rotas, retornando sempre com esse padrão
         "success": sucess,
         "message": message,
         "data": data,
-        "error": error
     });
 }
 
@@ -35,4 +35,9 @@ export const returnDefault = (status: boolean, message: string, data: any | null
     };
 }
 
-export const dateNow = new Date(Date.now() - 3 * 60 * 60 * 1000);
+export const dateNow = (date?: any): DateTime => {
+    if(date) {
+        return DateTime.fromFormat(date.toString(), "dd/MM/yyyy HH:mm", {zone: 'America/Sao_Paulo'});
+    }
+    return DateTime.now().setZone('America/Sao_Paulo');
+}
