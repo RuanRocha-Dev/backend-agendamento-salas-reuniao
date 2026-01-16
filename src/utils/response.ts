@@ -37,7 +37,7 @@ export const returnDefault = (status: boolean, message: string, data: any | null
 
 export const dateNow = (date?: any): DateTime => {
     if(date) {
-        return DateTime.fromFormat(date.toString(), "dd/MM/yyyy HH:mm", {zone: 'America/Sao_Paulo'});
+        return DateTime.fromISO(date).setZone('America/Sao_Paulo', { keepLocalTime: true })
     }
     return DateTime.now().setZone('America/Sao_Paulo');
 }

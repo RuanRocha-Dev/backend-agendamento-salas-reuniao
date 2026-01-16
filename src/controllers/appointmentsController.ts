@@ -16,7 +16,7 @@ export const appointmentsController = () => ({
   },
 
   findByDate: async (req: Request, res: Response) => {
-    const date = String(req?.query?.date);
+    const date = req?.query?.date;
 
     const result = await appointmentsService.findByDate(date);
     if(result?.status !== false) {
