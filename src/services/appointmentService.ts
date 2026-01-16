@@ -84,7 +84,7 @@ export const appointmentsService = {
             const startTime = new Date(appointment.dataValues.startTime);
             const endTime = new Date(appointment.dataValues.endTime);
 
-            if(startTime < dateNow().toJSDate() && endTime > dateNow().toJSDate()) {
+            if(startTime < dateNow().minus({ hours: 3 }).toJSDate() && endTime > dateNow().minus({ hours: 3 }).toJSDate()) {
                 return returnDefault(false, 'Não é possivel deletar um agendamento que esta em andamento.', null, 422);
             }
             
@@ -121,5 +121,36 @@ export const appointmentsService = {
         }
 
         return returnDefault(false, 'Nenhum agendamento encontrado para este horário', null, 409);
+    },
+
+    findFutureByRoomId: async (idRoom: number): Promise<returnDefaultInterface> => {
+        try {
+            const room = await MeetingRoom.findByPk(idRoom);
+            if(!room) {
+                return returnDefault(false, 'Nenhuma sala encontrada com esse ID.', null, 404);
+            }
+
+            const now = dateNow().minus({ hours: 3 }).toJSDate();
+            
+            const appointments = await Appointment.findAll({
+                where: {
+                    idMeetingRoom: idRoom
+                },
+                order: [['startTime', 'ASC']]
+            });
+
+            if(!appointments || appointments.length === 0) {
+                return returnDefault(true, 'Nenhum agendamento futuro para esta sala.', [], 200);
+            }
+
+            const futureAppointments = appointments.filter(appointment => {
+                const startTime = new Date(appointment.dataValues.startTime);
+                return startTime > now;
+            });
+
+            return returnDefault(true, 'Agendamentos futuros listados com sucesso.', futureAppointments, 200);
+        } catch (error: any) {
+            return returnDefault(false, 'Erro interno do servidor.', null, 500);
+        }
     },
 };

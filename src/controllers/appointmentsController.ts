@@ -31,7 +31,7 @@ export const appointmentsController = () => ({
 
     const result = await appointmentsService.create({startTime, endTime, idMeetingRoom, description});
     if(result?.status !== false) {
-      return sendResponse(res, true, "cadastro realizado com sucesso.", result?.data, result.code);
+      return sendResponse(res, true, result?.message, result?.data, result.code);
     }
     
     return sendResponse(res, false, result.message, null, result.code);
@@ -43,6 +43,29 @@ export const appointmentsController = () => ({
     const result = await appointmentsService.delete(id.id);
     if(result?.status !== false) {
       return sendResponse(res, true, result.message, null, result.code);
+    }
+    
+    return sendResponse(res, false, result.message, null, result.code);
+  },
+
+  findFutureByRoomId: async (req: Request, res: Response) => {
+    const idRoom = Number(req?.query?.idRoom);
+
+    if(!req?.query?.idRoom) {
+      return sendResponse(res, false, "Parametro idRoom obrigatório", null, 400);
+    }
+
+    if(!idRoom) {
+      return sendResponse(res, false, "O ID deve conter apenas numeros", null, 400);
+    }
+
+    if(idRoom <= 0) {
+      return sendResponse(res, false, "O ID não poder ser 0 ou um número negativo", null, 400);
+    }
+
+    const result = await appointmentsService.findFutureByRoomId(idRoom);
+    if(result?.status !== false) {
+      return sendResponse(res, true, result.message, result?.data, result.code);
     }
     
     return sendResponse(res, false, result.message, null, result.code);

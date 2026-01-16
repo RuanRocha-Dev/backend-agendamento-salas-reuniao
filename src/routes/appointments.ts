@@ -7,6 +7,7 @@ const router = Router();
 
 router.get("/findAll", appointmentsController().findAll);
 router.get("/findByDate", appointmentsController().findByDate);
+router.get("/findFutureByRoomId", appointmentsController().findFutureByRoomId);
 
 router.post("/create", appointMentsValidation, appointmentsController().create);
 
