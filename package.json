@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",
+    "migrations": "npx sequelize-cli db:migrate --config src/config/config.cjs",
     "build": "tsc",
     "start": "node dist/server.js"
   },
